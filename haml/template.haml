@@ -1,0 +1,35 @@
+!!!5
+%head
+  %link(href='/css/style.css' type='text/css' rel='stylesheet')
+  %link(href='/pygments/monokai.css' type='text/css' rel='stylesheet')
+  %link(href='http://fonts.googleapis.com/css?family=Source+Code+Pro' rel='stylesheet' type='text/css')
+  %link(href='http://fonts.googleapis.com/css?family=Source+Sans+Pro' rel='stylesheet' type='text/css')
+  %link(href='http://fonts.googleapis.com/css?family=Six+Caps' rel='stylesheet' type='text/css')
+  /%link(href='/css/screen.css' media='screen, projection' rel='stylesheet' type='text/css')
+  /%link(href='/css/print.css' media='print' rel='stylesheet' type='text/css')
+  /[if lt IE 8]
+    /%link(href='/css/ie.css' media='screen, projection' rel='stylesheet' type='text/css')
+
+%body
+  .about
+    %h4 Jonathan Baudanza
+    San Francisco, CA
+
+    .links
+      %a{:href => 'https://github.com/jbaudanza'}
+        github
+      %a{:href => 'https://twitter.com/jbaudanza'}
+        twitter
+      %a{:href => 'http://www.beatlab.com/jbaudanza'}
+        beatlab
+
+  %article
+    = yield
+
+  :javascript
+    (function(d, t) {
+        var g = d.createElement(t),
+            s = d.getElementsByTagName(t)[0];
+        g.src = '//hnbutton.appspot.com/static/hn.js';
+        s.parentNode.insertBefore(g, s);
+    }(document, 'script'));

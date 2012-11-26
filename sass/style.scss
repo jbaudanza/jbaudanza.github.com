@@ -1,0 +1,46 @@
+@import "compass/css3";
+
+//$blueprint-font-family: Alegreya, Palatino, Georgia, serif;
+//$blueprint-fixed-font-family: 'Source Code Pro', monospace;
+$blueprint-font-family: 'Source Sans Pro', sans-serif;
+$blueprint-fixed-font-family: "andale mono", "lucida console", monospace;
+$blueprint-font-size: 14px;
+
+@import "blueprint";
+@import "blueprint/reset";
+@import "blueprint/grid";
+
+body {
+  padding-top: 2em;
+  @include blueprint-typography(true);
+}
+
+h1 {
+  font-family: 'Six Caps', sans-serif;
+}
+
+.about {
+  @include column(8);
+  text-align: center;
+
+  .links {
+    a {
+      @include inline-block;
+    }
+  }
+}
+
+article {
+  @include column(16);
+
+  time {
+    color: $quiet-color;
+  }
+}
+
+.highlight {
+  overflow-y: auto;
+  padding: 0 21px;
+  @include border-radius(9px);
+  margin: 0 0 1.5em;
+}
