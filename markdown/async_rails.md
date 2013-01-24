@@ -1,6 +1,6 @@
 # Handling requests asynchronously in Rails
 
-<time datetime="2012-11-25" pubdate>Nov 25, 2012</time>
+<time datetime="2013-01-24" pubdate>Jan 24, 2013</time>
 <a href="http://news.ycombinator.com/submit" class="hn-share-button">Vote on HN</a>
 
 It is generally considered bad practice to block a web request handler on a
@@ -38,7 +38,8 @@ class FacebookNamesController < ApplicationController
     end
 
     # This informs thin that the request will be handled asynchronously
-    throw :async
+    self.response_body = ''
+    self.status = -1
   end
 end
 ```
@@ -55,24 +56,9 @@ I've put included that functionality into the following mixin module.
 
 ```ruby
 module AsyncController
-  def self.included(mod)
-    @@app ||= begin
-      Rails.application.middleware.build(@@middleware)
-    end
-  end
-
-  def finish_async_request(action_name=nil, &proc)
-    if !action_name
-      env['async_controller.proc'] = proc
-      action_name = :_async_action
-    end
-
-    @@middleware.action = self.class.action(action_name)
-
-    env['async.callback'].call(@@app.call(env))
-  end
-
-  class Middleware
+  # This is the rack endpoint that will be invoked asyncronously. It will be
+  # wrapped in all the middleware that a normal Rails endpoint would have.
+  class RackEndpoint
     attr_accessor :action
 
     def call(env)
@@ -80,10 +66,38 @@ module AsyncController
     end
   end
 
-  @@middleware = Middleware.new
+  @@endpoint = RackEndpoint.new
+
+  def self.included(mod)
+    # LocalCache isn't able to be instantiated twice, so it must be removed
+    # from the new middleware stack.
+    middlewares = Rails.application.middleware.middlewares.reject do |m|
+      m.klass.name == "ActiveSupport::Cache::Strategy::LocalCache"
+    end
+
+    @@wrapped_endpoint = middlewares.reverse.inject(@@endpoint) do |a, e|
+      e.build(a)
+    end
+  end
+
+  # Called to finish an asynchronous request. Can be invoked with a block
+  # or with the symbol of an action name.
+  def finish_request(action_name=nil, &proc)
+    async_callback = request.env.delete('async.callback')
+    env = request.env.clone
+
+    if !action_name
+      env['async_controller.proc'] = proc
+      action_name = :_async_action
+    end
+
+    @@endpoint.action = self.class.action(action_name)
+
+    async_callback.call(@@wrapped_endpoint.call(env))
+  end
 
   def _async_action
-    env['async_controller.proc'].call(self)
+    instance_eval(&request.env['async_controller.proc'])
   end
 end
 ```
@@ -99,13 +113,14 @@ class FacebookNamesController < ApplicationController
     http = EM::HttpRequest.new(uri).get(uri)
 
     http.callback do
-      finish_async_request do |controller|
-        controller.session[:name] = JSON.parse(response)['name']
-        controller.render :text => "Hello #{session[:name]}"
+      finish_async_request do
+        session[:name] = JSON.parse(response)['name']
+        render :text => "Hello #{session[:name]}"
       end
     end
 
-    throw :async
+    self.response_body = ''
+    self.status = -1
   end
 end
 ```
