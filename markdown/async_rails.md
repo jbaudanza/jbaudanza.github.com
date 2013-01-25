@@ -1,6 +1,6 @@
 # Handling requests asynchronously in Rails
 
-<time datetime="2013-01-24" pubdate>Jan 24, 2013</time>
+<time datetime="2013-01-24" pubdate>Jan 25, 2013</time>
 <a href="http://news.ycombinator.com/submit" class="hn-share-button">Vote on HN</a>
 
 It is generally considered bad practice to block a web request handler on a
@@ -29,17 +29,21 @@ class FacebookNamesController < ApplicationController
     uri = "http://graph.facebook.com/" + param[:facebook_uid]
     http = EM::HttpRequest.new(uri).get(uri)
 
-    # Set a callback to finish the request when facebook returns the query.
-    # In the meantime, this process is free to handle other requests.
-    http.callback do
-      # Oops.. this won't work.
-      session[:name] = JSON.parse(response)['name']
-      env['async.callback'].call('200', {}, "Hello #{session[:name]}")
-    end
-
     # This informs thin that the request will be handled asynchronously
     self.response_body = ''
     self.status = -1
+
+    # Set a callback to finish the request when facebook returns the query.
+    # In the meantime, this process is free to handle other requests.
+    http.callback do
+      # Oops.. this line won't have the effect we want because the Session
+      # middleware has already run its course
+      session[:name] = JSON.parse(response)['name']
+
+      # We'd like to use something like `render :text` here, but we
+      # can't because we are limited to the raw Rack API.
+      env['async.callback'].call('200', {}, "Hello #{session[:name]}")
+    end
   end
 end
 ```
@@ -52,7 +56,7 @@ unable to store the user's name in it.
 To get back the full Rail's functionality, we need to construct a new
 rack application that is bundled with all the Rail's middleware.
 
-I've put included that functionality into the following mixin module.
+I've included that functionality into the following mixin module.
 
 ```ruby
 module AsyncController
@@ -102,7 +106,7 @@ module AsyncController
 end
 ```
 
-With this module, our controller can be written like so:
+With this mixin, our controller can be written like so:
 
 ```ruby
 class FacebookNamesController < ApplicationController
@@ -125,5 +129,5 @@ class FacebookNamesController < ApplicationController
 end
 ```
 
-This allows us the full functionality of Rails without having to block waiting
-on an external service.
+This give us access to the full functionality of Rails without having to
+block waiting on an external service.
