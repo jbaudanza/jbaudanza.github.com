@@ -1,3 +1,7 @@
+---
+layout: posts
+title: Handling requests asynchronously in Rails
+---
 # Handling requests asynchronously in Rails
 
 <time datetime="2013-01-24" pubdate>Jan 25, 2013</time>

@@ -1,0 +1,6 @@
+---
+server: false
+auto: false
+markdown: redcarpet
+pygments: true
+exclude: README.md, Rakefile, Gemfile, Gemfile.lock
