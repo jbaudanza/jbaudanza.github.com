@@ -5,6 +5,7 @@
   %link(href='http://fonts.googleapis.com/css?family=Source+Code+Pro' rel='stylesheet' type='text/css')
   %link(href='http://fonts.googleapis.com/css?family=Source+Sans+Pro' rel='stylesheet' type='text/css')
   %link(href='http://fonts.googleapis.com/css?family=Six+Caps' rel='stylesheet' type='text/css')
+  %link(href='http://fonts.googleapis.com/css?family=Lora' rel='stylesheet' type='text/css')
   /%link(href='/css/screen.css' media='screen, projection' rel='stylesheet' type='text/css')
   /%link(href='/css/print.css' media='print' rel='stylesheet' type='text/css')
   /[if lt IE 8]
@@ -24,6 +25,14 @@
         beatlab
 
   %article
+    %h1
+      {{page.title}}
+
+    %time(datetime='{{page.date}}')
+      {{page.date|date:'%h %d, %Y'}}
+    %a(href="http://news.ycombinator.com/submit" class="hn-share-button")
+      Vote on HN
+
     {{content}}
 
   :javascript

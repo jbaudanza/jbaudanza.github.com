@@ -2,9 +2,9 @@
 
 //$blueprint-font-family: Alegreya, Palatino, Georgia, serif;
 //$blueprint-fixed-font-family: 'Source Code Pro', monospace;
-$blueprint-font-family: 'Source Sans Pro', sans-serif;
+$blueprint-font-family: 'Lora', serif;
 $blueprint-fixed-font-family: "andale mono", "lucida console", monospace;
-$blueprint-font-size: 14px;
+$blueprint-font-size: 22px;
 
 @import "blueprint";
 @import "blueprint/reset";
@@ -13,10 +13,10 @@ $blueprint-font-size: 14px;
 body {
   padding-top: 2em;
   @include blueprint-typography(true);
-}
 
-h1 {
-  font-family: 'Six Caps', sans-serif;
+  h1 {
+    font-size: 38px;
+  }
 }
 
 .about {
@@ -28,6 +28,8 @@ h1 {
       @include inline-block;
     }
   }
+
+  font-size: 14px;
 }
 
 article {
@@ -43,4 +45,5 @@ article {
   padding: 0 21px;
   @include border-radius(9px);
   margin: 0 0 1.5em;
+  font-size: 14px;
 }

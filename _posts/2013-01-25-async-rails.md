@@ -2,11 +2,6 @@
 layout: posts
 title: Handling requests asynchronously in Rails
 ---
-# Handling requests asynchronously in Rails
-
-<time datetime="2013-01-24" pubdate>Jan 25, 2013</time>
-<a href="http://news.ycombinator.com/submit" class="hn-share-button">Vote on HN</a>
-
 It is generally considered bad practice to block a web request handler on a
 network request to a third party service. If that service should become slow or
 unavailable, this can clog up all your web processes.

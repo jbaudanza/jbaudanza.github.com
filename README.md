@@ -16,6 +16,10 @@ Building posts
 
     jekyll
 
+Running a local server
+
+    jekyll --server --auto
+
 Uploading to S3
 
     s3cmd sync _site/ s3://www.jonb.org/ --acl-public --guess-mime-type
